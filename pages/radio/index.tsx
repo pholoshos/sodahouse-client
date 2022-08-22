@@ -59,10 +59,10 @@ const Home: NextPage = () => {
 
     useEffect(() => {
 
-        socket.on("hasMessage", (args) => {
+        socket.on("hasMessage", (args : any) => {
             setRecieved(args);
         })
-        socket.on("recieveImage", (args) => {
+        socket.on("recieveImage", (args:any) => {
 
             const blob = new Blob([args.image])
             const srcBlob = URL.createObjectURL(blob);
@@ -70,7 +70,7 @@ const Home: NextPage = () => {
 
         })
 
-        socket.on("recieveAudio", (args) => {
+        socket.on("recieveAudio", (args: any) => {
 
             const blob = new Blob([args.audio])
             const srcBlob = URL.createObjectURL(blob);
