@@ -1,7 +1,11 @@
+import { resolveObjectURL } from 'buffer';
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Alert, Button, Container, Form } from 'react-bootstrap'
 import socket from '../util/socket'
+import { getMedia } from '../util/webrtc'
+const getUserMedia = require('getusermedia');
+
 
 
 interface IMessage {
@@ -10,11 +14,11 @@ interface IMessage {
   time?: string;
 }
 interface IUserData {
-  final? : {
-    username? : string;
+  final?: {
+    username?: string;
   },
-  pre? : {
-    username? : string;
+  pre?: {
+    username?: string;
   },
 }
 
@@ -23,10 +27,16 @@ const Home: NextPage = () => {
   const [message, setMessage] = useState<string>('Hello');
   const [recieved, setRecieved] = useState<IMessage>({});
   const [userDetails, setDetails] = useState<IUserData>({});
-  
+  let myRef = useRef<HTMLInputElement>(null)
+  const [image, setImage] = useState('')
+  const [audio, setAudio] = useState('')
+  //console.log("LOG::: ref ",myRef?.current?.value);
 
-
+  const record = () => {
+    getMedia()
+  }
   const handleSendMessage = () => {
+
     const data = {
       text: " " + message,
       username: userDetails?.final?.username,
@@ -41,7 +51,7 @@ const Home: NextPage = () => {
     socket.auth = { username };
     socket.connect()
     socket.connected ? console.log("connected") : console.log("not connected!")
-    socket.emit("listen", { Data: "something here" })
+
   })
 
 
@@ -50,6 +60,22 @@ const Home: NextPage = () => {
     socket.on("hasMessage", (args) => {
       setRecieved(args);
     })
+    socket.on("recieveImage", (args) => {
+
+      const blob = new Blob([args.image])
+      const srcBlob = URL.createObjectURL(blob);
+      setImage(srcBlob)
+
+    })
+
+    socket.on("recieveAudio", (args) => {
+
+      const blob = new Blob([args.audio])
+      const srcBlob = URL.createObjectURL(blob);
+
+      setAudio(srcBlob);
+
+    })
 
   }, [])
 
@@ -57,36 +83,17 @@ const Home: NextPage = () => {
     const txts = messages.map((m: any) => m?.text);
     if (!txts.includes(recieved)) {
       setMessages([...messages, recieved])
-      console.log("LOG:::current Messages", messages)
+      //console.log("LOG:::current Messages", messages)
     }
 
   }, [recieved])
   return (
-    <>
-      {!userDetails?.final && (
-        <>  
-          <h1>Your details</h1>
-          <Form.Group>
-            <Form.Label>Username</Form.Label>
-            <Form.Control onChange={(value) => {  setDetails({pre:{username :  value.target.value}}) }} type="email" placeholder="user name " />
-          </Form.Group>
-          <Button onClick={()=>{setDetails({final:{username : userDetails?.pre?.username}})}} variant='primary'>Get Started</Button>
-
-        </>
-      ) || (<>
-        <h1>SodaHouse</h1>
-        {messages.map((message: IMessage) => {
-          return <Alert key={message?.text} variant={message.username == 'you' ? 'primary' : 'warning'}>
-            {message?.username}-{message?.text}
-          </Alert>
-        })}
-
-
-        <Form.Control onChange={(value) => { setMessage(value.target.value) }} type="email" placeholder="Message here" />
-        <Button onClick={handleSendMessage} variant='primary'>Send Message</Button>
-      </>)
-      }
-    </>
+    <div>
+      <h1>SodaHouse FM</h1>
+      <p>Listen to some fine tunes</p>
+      <audio autoPlay src={audio}></audio>
+      <Alert>Be FREE</Alert>
+    </div>
 
   )
 }
