@@ -4,9 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Alert, Button, Container, Form } from 'react-bootstrap'
 import socket from '../util/socket'
 import { getMedia } from '../util/webrtc'
-const getUserMedia = require('getusermedia');
-
-
 
 interface IMessage {
   username?: string;
