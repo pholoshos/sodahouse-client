@@ -3,47 +3,22 @@ import type { NextPage } from 'next'
 import { useEffect, useRef, useState } from 'react'
 import { Alert, Button, Container, Form } from 'react-bootstrap'
 import socket from '../util/socket'
-import { getMedia } from '../util/webrtc'
-
-interface IMessage {
-  username?: string;
-  text?: string;
-  time?: string;
-}
-interface IUserData {
-  final?: {
-    username?: string;
-  },
-  pre?: {
-    username?: string;
-  },
-}
+import { getMedia } from '../util/webrtc';
 
 const Home: NextPage = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [message, setMessage] = useState<string>('Hello');
-  const [recieved, setRecieved] = useState<IMessage>({});
-  const [userDetails, setDetails] = useState<IUserData>({});
-  let myRef = useRef<HTMLInputElement>(null)
-  const [image, setImage] = useState('')
-  const [audio, setAudio] = useState('')
-  //console.log("LOG::: ref ",myRef?.current?.value);
 
-  const record = () => {
-    getMedia()
-  }
-  const handleSendMessage = () => {
+  const [mainAudio, setMainAudio] = useState<any>();
+  const [isPlaying, setIsPlaying] = useState(false)
 
-    const data = {
-      text: " " + message,
-      username: userDetails?.final?.username,
-      time: Date.now().toString()
-    }
-    setMessages([...messages, { ...data, username: 'you' }])
-    socket.emit('sendMessage', data)
+  const handlePlay = () => {
+    mainAudio.pause();
+    mainAudio.currentTime = 0;
+    mainAudio?.play();
+    console.log("LOG::: manual play")
   }
 
   useEffect(() => {
+    document.body.style.backgroundColor = "black"
     const username = "pholosho";
     socket.auth = { username };
     socket.connect()
@@ -53,46 +28,44 @@ const Home: NextPage = () => {
 
 
   useEffect(() => {
-
-    socket.on("hasMessage", (args: any) => {
-      setRecieved(args);
-    })
-    socket.on("recieveImage", (args:any) => {
-
-      const blob = new Blob([args.image])
-      const srcBlob = URL.createObjectURL(blob);
-      setImage(srcBlob)
-
-    })
-
-    socket.on("recieveAudio", (args : any) => {
-
+    socket.on("recieveAudio", (args: any) => {
       const blob = new Blob([args.audio])
       const srcBlob = URL.createObjectURL(blob);
-
-      setAudio(srcBlob);
-
+      const audio = new Audio(srcBlob);
+      setIsPlaying(true);
+      setMainAudio(audio);
     })
 
   }, [])
 
   useEffect(() => {
-    const txts = messages.map((m: any) => m?.text);
-    if (!txts.includes(recieved)) {
-      setMessages([...messages, recieved])
-      //console.log("LOG:::current Messages", messages)
-    }
+    mainAudio?.play();
+  }, [mainAudio])
 
-  }, [recieved])
   return (
-    <div>
-      <h1>SodaHouse FM</h1>
+    <div style={{ background: 'black', color: 'white', textAlign: 'center' }}>
+      <br />
+      <h1>SodaHouse Radio</h1>
+
+
       <p>Listen to some fine tunes</p>
-      <audio autoPlay src={audio}></audio>
-      <Alert>Be FREE</Alert>
+      {isPlaying && <>
+        <img height={250} onClick={handlePlay} src={'https://media2.giphy.com/media/TqsLxad921AYMHmLXg/giphy-downsized-large.gif'}></img>
+        <h3>Now Listening.. .</h3>
+        <p>[Press here to Play if audio not playing]</p>
+
+      </> || <>
+
+          <img height={250} src={'https://miro.medium.com/max/1400/1*e_Loq49BI4WmN7o9ItTADg.gif'}></img>
+          <h3>Please Wait ...</h3>
+        </>}
+
+
     </div>
 
   )
 }
+
+
 
 export default Home
