@@ -1,6 +1,6 @@
 import {io} from 'socket.io-client'
 
-const URL =  "ws://soda-house-api.onrender.com";
+const URL =  "wss://soda-house-api.onrender.com";
 //s
 export const socket = io(URL,{ autoConnect: false });
 
