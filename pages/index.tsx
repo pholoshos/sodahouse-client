@@ -10,6 +10,7 @@ import { getMedia } from "../util/webrtc";
 const Home: NextPage = () => {
   const [mainAudio, setMainAudio] = useState<any>();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [users,setUsers] = useState('🧑🏾‍💻🤨 we getting number of listeners');
 
   const [notify, setNotify] = useState({
     message: "Shout Out!",
@@ -53,7 +54,14 @@ const Home: NextPage = () => {
         setIsPlaying(true);
         setMainAudio(audio);  
       });
+
+      socket.on("users", (args: any) => {
+        console.log("LOG:::users",args.users)
+        setUsers('😎 '+args.users+ ' people listening')
+      });
   }, []);
+
+
 
   useEffect(() => {
     socket.on("shoutOut", (args: any) => {
@@ -62,9 +70,11 @@ const Home: NextPage = () => {
           message: args?.message,
           description: args?.description,
         });
+        notification.destroy('not');
         notification.open({
           message: <p>📢🚨{args.message}</p>,
           description: args?.description,
+          key:'not'
         });
       }
     });
@@ -75,9 +85,11 @@ const Home: NextPage = () => {
   }, [mainAudio]);
 
   const onShoutOut = () => {
+    notification.destroy();
     notification.open({
       message: <p>📢🚨{notifyRecieve.message}</p>,
       description: notifyRecieve?.description,
+      
     });
   };
 
@@ -95,7 +107,7 @@ const Home: NextPage = () => {
   return (
     <div style={{ background: "black", color: "white", textAlign: "center" }}>
       <br />
-      <h1>SodaHouse Radio</h1>
+      <h1>🥤SodaHouse Radio</h1>
 
       <p>Listen to some fine tunes</p>
       {(isPlaying && (
@@ -108,14 +120,14 @@ const Home: NextPage = () => {
             }
           ></img>
           <br></br>
-          <small style={{ color: "blue" }}>10 people Listening</small>
-          <h3>Now Listening.. .</h3>
+          <small style={{ color: "blue" }}>{users}</small>
+          <h3>🎧Now Listening.. .</h3>
           <p>[Press here to Play if audio not playing]</p>
-          <Button onClick={() => setShowInput(true)}>Shout Out</Button>
+          <Button onClick={() => setShowInput(true)}>📢🔥Shout Out</Button>
 
           <Modal show={showInput} onHide={() => setShowInput(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>Shout Out!!!</Modal.Title>
+              <Modal.Title>📢🔥Shout Out!!!</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Form>
@@ -123,16 +135,16 @@ const Home: NextPage = () => {
                   onChange={({ target }) =>
                     setNotify({ ...notify, description: target.value })
                   }
-                  placeholder="something for the people listening.."
+                  placeholder="🌎📻😀something for the people listening.."
                 ></Form.Control>
               </Form>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowInput(false)}>
-                Cancel
+                😭🚶🏻Cancel
               </Button>
               <Button variant="primary" onClick={hanldeShoutOut}>
-                Share
+                📢😀Share
               </Button>
             </Modal.Footer>
           </Modal>
@@ -145,7 +157,7 @@ const Home: NextPage = () => {
               "https://miro.medium.com/max/1400/1*e_Loq49BI4WmN7o9ItTADg.gif"
             }
           ></img>
-          <h3>Please Wait ...</h3>
+          <h3>🥺🙏🏻Please Wait ...</h3>
         </>
       )}
     </div>
