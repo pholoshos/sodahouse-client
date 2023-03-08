@@ -54,7 +54,7 @@ const Home: NextPage = () => {
         const audio = new Audio(srcBlob);
         audioRef.current.src = srcBlob;
         setIsPlaying(true);
-        //setMainAudio(audio);  
+        setMainAudio(audio);  
       });
 
       socket.on("users", (args: any) => {
@@ -83,7 +83,7 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    mainAudio?.play();
+    audioRef.current?.play();
   }, [mainAudio]);
 
   const onShoutOut = () => {
