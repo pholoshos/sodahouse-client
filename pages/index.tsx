@@ -107,6 +107,7 @@ const Home: NextPage = () => {
     notification.open({
       message: <p>🤩🚀Shout Out sent!!</p>,
     });
+    setShowInput(false)
   };
 
   return (
