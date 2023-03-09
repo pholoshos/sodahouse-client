@@ -11,7 +11,7 @@ const Home: NextPage = () => {
   const [mainAudio, setMainAudio] = useState<any>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [users,setUsers] = useState('🧑🏾‍💻🤨 we getting number of listeners');
-  const audioRef = useRef<any>();
+  const audioRef = useRef<any>(null);
 
   const [notify, setNotify] = useState({
     message: "Shout Out!",
@@ -30,11 +30,15 @@ const Home: NextPage = () => {
 
 
   const handlePlay = () => {
-    audioRef.current.pause();
+    audioRef?.current?.pause();
     audioRef.current.currentTime = 0;
-    audioRef.current.play();
+    audioRef?.current?.play();
     console.log("LOG::: manual play");
   };
+
+  const manual = ()=>{
+    audioRef?.current?.play();
+  }
 
   useEffect(() => {
     document.body.style.backgroundColor = "black";
@@ -52,7 +56,6 @@ const Home: NextPage = () => {
         const blob = new Blob([args.audio]);
         const srcBlob = URL.createObjectURL(blob);
         const audio = new Audio(srcBlob);
-        audioRef.current.src = srcBlob;
         setIsPlaying(true);
         setMainAudio(audio);  
       });
@@ -83,7 +86,7 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    audioRef.current?.play();
+    audioRef?.current?.play();
   }, [mainAudio]);
 
   const onShoutOut = () => {
@@ -122,10 +125,10 @@ const Home: NextPage = () => {
             }
           ></img>
           <br></br>
-          <audio ref={audioRef}/>
+          <audio ref={audioRef} src={mainAudio.src}/>
           <small style={{ color: "blue" }}>{users}</small>
           <h3>🎧Now Listening.. .</h3>
-          <p>[Press here to Play if audio not playing]</p>
+          <p onClick={manual}>[Press here to Play if audio not playing]</p>
           <Button onClick={() => setShowInput(true)}>📢🔥Shout Out</Button>
 
           <Modal show={showInput} onHide={() => setShowInput(false)}>
