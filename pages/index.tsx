@@ -32,6 +32,7 @@ const Home: NextPage = () => {
   const handlePlay = () => {
     var sound = new Howl({
       format: ['ogg'],
+      html5: true,
       src: [mainAudio?.src],
     });
 
@@ -41,6 +42,7 @@ const Home: NextPage = () => {
   const manual = () => {
     var sound = new Howl({
       src: ['/test.mp3'],
+      html5: true,
     });
     sound.play();
   };
@@ -91,6 +93,7 @@ const Home: NextPage = () => {
     var sound = new Howl({
       format: ['ogg'],
       src: [mainAudio?.src],
+      html5: true,
     });
     sound.play();
   }, [mainAudio]);
