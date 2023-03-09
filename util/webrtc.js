@@ -37,8 +37,8 @@ export const getMedia = async () => {
                 mediaRecorder.start();
                 setTimeout(() => {
                     mediaRecorder.stop();
-                }, 39997);
-            }, 40000)
+                }, 19997);
+            }, 20000)
         });
 }
 
