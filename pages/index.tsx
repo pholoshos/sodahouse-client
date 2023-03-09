@@ -50,7 +50,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     document.body.style.backgroundColor = "black";
     const username = makeRandom(18);
-    console.log("LOG:::usename", username.toLocaleLowerCase());
     socket.auth = { username };
     socket.connect();
     socket.connected ? console.log("connected") : console.log("not connected!");
