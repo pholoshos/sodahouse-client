@@ -10,7 +10,7 @@ import { getMedia } from "../util/webrtc";
 const Home: NextPage = () => {
   const [mainAudio, setMainAudio] = useState<any>();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [users,setUsers] = useState('🧑🏾‍💻🤨 we getting number of listeners');
+  const [users, setUsers] = useState("🧑🏾‍💻🤨 we getting number of listeners");
   const audioRef = useRef<any>(null);
 
   const [notify, setNotify] = useState({
@@ -28,7 +28,6 @@ const Home: NextPage = () => {
   const [showInput, setShowInput] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
 
-
   const handlePlay = () => {
     audioRef?.current?.pause();
     audioRef.current.currentTime = 0;
@@ -36,9 +35,9 @@ const Home: NextPage = () => {
     console.log("LOG::: manual play");
   };
 
-  const manual = ()=>{
+  const manual = () => {
     audioRef?.current?.play();
-  }
+  };
 
   useEffect(() => {
     document.body.style.backgroundColor = "black";
@@ -47,26 +46,23 @@ const Home: NextPage = () => {
     socket.auth = { username };
     socket.connect();
     socket.connected ? console.log("connected") : console.log("not connected!");
-    setCanPlay(true)
-    
-  },);
+    setCanPlay(true);
+  });
 
   useEffect(() => {
-      socket.on("recieveAudio", (args: any) => {
-        const blob = new Blob([args.audio]);
-        const srcBlob = URL.createObjectURL(blob);
-        const audio = new Audio(srcBlob);
-        setIsPlaying(true);
-        setMainAudio(audio);  
-      });
+    socket.on("recieveAudio", (args: any) => {
+      const blob = new Blob([args.audio]);
+      const srcBlob = URL.createObjectURL(blob);
+      const audio = new Audio(srcBlob);
+      setIsPlaying(true);
+      setMainAudio(audio);
+    });
 
-      socket.on("users", (args: any) => {
-        console.log("LOG:::users",args.users)
-        setUsers('😎 '+args.users+ ' people listening')
-      });
+    socket.on("users", (args: any) => {
+      console.log("LOG:::users", args.users);
+      setUsers("😎 " + args.users + " people listening");
+    });
   }, []);
-
-
 
   useEffect(() => {
     socket.on("shoutOut", (args: any) => {
@@ -75,11 +71,11 @@ const Home: NextPage = () => {
           message: args?.message,
           description: args?.description,
         });
-        notification.destroy('not');
+        notification.destroy("not");
         notification.open({
           message: <p>📢🚨{args.message}</p>,
           description: args?.description,
-          key:'not'
+          key: "not",
         });
       }
     });
@@ -94,7 +90,6 @@ const Home: NextPage = () => {
     notification.open({
       message: <p>📢🚨{notifyRecieve.message}</p>,
       description: notifyRecieve?.description,
-      
     });
   };
 
@@ -107,7 +102,7 @@ const Home: NextPage = () => {
     notification.open({
       message: <p>🤩🚀Shout Out sent!!</p>,
     });
-    setShowInput(false)
+    setShowInput(false);
   };
 
   return (
@@ -126,7 +121,6 @@ const Home: NextPage = () => {
             }
           ></img>
           <br></br>
-          <audio autoPlay={true} ref={audioRef} src={mainAudio.src}/>
           <small style={{ color: "blue" }}>{users}</small>
           <h3>🎧Now Listening.. .</h3>
           <p onClick={manual}>[Press here to Play if audio not playing]</p>
@@ -167,6 +161,12 @@ const Home: NextPage = () => {
           <h3>🥺🙏🏻Please Wait ...</h3>
         </>
       )}
+      <Button  variant="secondary" style={{marginLeft:10}} onClick={()=>{setMainAudio(null);manual();setIsPlaying(false)}}>😀🧨🚀Test Radio!</Button>
+      <audio
+        autoPlay={true}
+        ref={audioRef}
+        src={!mainAudio?.src ? "/test.mp3" : mainAudio.src}
+      />
     </div>
   );
 };
