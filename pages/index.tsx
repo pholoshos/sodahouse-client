@@ -126,7 +126,7 @@ const Home: NextPage = () => {
             }
           ></img>
           <br></br>
-          <audio ref={audioRef} src={mainAudio.src}/>
+          <audio autoPlay={true} ref={audioRef} src={mainAudio.src}/>
           <small style={{ color: "blue" }}>{users}</small>
           <h3>🎧Now Listening.. .</h3>
           <p onClick={manual}>[Press here to Play if audio not playing]</p>
