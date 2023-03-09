@@ -6,6 +6,7 @@ import { Alert, Button, Container, Form, Modal } from "react-bootstrap";
 import { makeRandom } from "../util/makeRandom";
 import socket from "../util/socket";
 import { getMedia } from "../util/webrtc";
+const { Howl, Howler } = require("howler");
 
 const Home: NextPage = () => {
   const [mainAudio, setMainAudio] = useState<any>();
@@ -29,14 +30,19 @@ const Home: NextPage = () => {
   const [canPlay, setCanPlay] = useState(false);
 
   const handlePlay = () => {
-    audioRef?.current?.pause();
-    audioRef.current.currentTime = 0;
-    audioRef?.current?.play();
-    console.log("LOG::: manual play");
+    var sound = new Howl({
+      format: ['ogg'],
+      src: [mainAudio?.src],
+    });
+
+    sound.play();
   };
 
   const manual = () => {
-    audioRef?.current?.play();
+    var sound = new Howl({
+      src: ['/test.mp3'],
+    });
+    sound.play();
   };
 
   useEffect(() => {
@@ -82,7 +88,11 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    audioRef?.current?.play();
+    var sound = new Howl({
+      format: ['ogg'],
+      src: [mainAudio?.src],
+    });
+    sound.play();
   }, [mainAudio]);
 
   const onShoutOut = () => {
@@ -161,12 +171,17 @@ const Home: NextPage = () => {
           <h3>🥺🙏🏻Please Wait ...</h3>
         </>
       )}
-      <Button  variant="secondary" style={{marginLeft:10}} onClick={()=>{setMainAudio(null);manual();setIsPlaying(false)}}>😀🧨🚀Test Radio!</Button>
-      <audio
-        autoPlay={true}
-        ref={audioRef}
-        src={!mainAudio?.src ? "/test.mp3" : mainAudio.src}
-      />
+      <Button
+        variant="secondary"
+        style={{ marginLeft: 10 }}
+        onClick={() => {
+          setMainAudio(null);
+          manual();
+          setIsPlaying(false);
+        }}
+      >
+        😀🧨🚀Test Radio!
+      </Button>
     </div>
   );
 };
